@@ -1,0 +1,34 @@
+services:
+  php:
+    build:
+      context: ./back
+    restart: always
+    volumes:
+      - ./back:/srv/app
+      - db_data:/srv/app/var
+    environment:
+      - APP_ENV=dev
+      - DATABASE_URL=postgresql://app:!ChangeMe!@database:5432/app?serverVersion=16&charset=utf8
+      - TRUSTED_PROXIES=*
+
+  nuxt:
+    build:
+      context: ./front
+    restart: always
+    ports:
+      - "3000:3000"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./back/public:/srv/app/public
+    depends_on:
+      - php
+      - nuxt
+
+volumes:
+  db_data:

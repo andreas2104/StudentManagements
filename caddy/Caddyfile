@@ -1,0 +1,34 @@
+{
+    admin off
+}
+
+:80 {
+    @api {
+        path /api/*
+    }
+
+    @apiRoot {
+        path /api
+    }
+
+    @docs {
+        path /docs
+        path /docs.jsonld
+        path /contexts/*
+    }
+
+    @notApi {
+        not path /api
+        not path /api/*
+        not path /docs
+        not path /docs.jsonld
+        not path /contexts/*
+    }
+
+    reverse_proxy @apiRoot php:8080
+    reverse_proxy @api php:8080
+    reverse_proxy @docs php:8080
+    reverse_proxy @notApi nuxt:3000
+
+    encode gzip
+}
