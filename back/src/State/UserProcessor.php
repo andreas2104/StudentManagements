@@ -10,9 +10,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserProcessor implements ProcessorInterface
 {
     public function __construct(
-        /** @var ProcessorInterface<User> $persistProcessor */
-        private ProcessorInterface $persistProcessor,
-        private UserPasswordHasherInterface $passwordHasher
+        private UserPasswordHasherInterface $passwordHasher,
+        private ProcessorInterface $persistProcessor
     ) {
     }
 
