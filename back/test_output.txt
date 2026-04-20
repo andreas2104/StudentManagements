@@ -1,0 +1,41 @@
+PHPUnit 12.5.1 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.30
+Configuration: /home/youngs/Desktop/devweb/TaxManager/back/phpunit.dist.xml
+
+EE                                                                  2 / 2 (100%)
+
+Time: 00:02.947, Memory: 50.50 MB
+
+There were 2 errors:
+
+1) App\Tests\Api\UserRegistrationTest::testRegistration
+Symfony\Component\DependencyInjection\Exception\RuntimeException: Cannot autowire service "App\State\UserProcessor": argument "$persistProcessor" of method "__construct()" references interface "ApiPlatform\State\ProcessorInterface" but no such service exists. You should maybe alias this interface to one of these existing services: "App\State\PostProcessor", "App\State\UserProcessor", "api_platform.state_processor.locator", "api_platform.state_processor.serialize", "api_platform.state_processor.write", "api_platform.state_processor.add_link_header", "api_platform.state_processor.documentation.serialize", "api_platform.state_processor.documentation.write", "api_platform.swagger_ui.processor", "api_platform.hydra.processor.link", "api_platform.doctrine.orm.state.remove_processor", "api_platform.doctrine.orm.state.persist_processor", "api_platform.http_cache.processor.add_headers", "api_platform.mercure.processor.add_link_header", "api_platform.hydra.processor.link.inner".
+
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/dependency-injection/Compiler/DefinitionErrorExceptionPass.php:51
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/dependency-injection/Compiler/Compiler.php:80
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/dependency-injection/ContainerBuilder.php:768
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/http-kernel/Kernel.php:507
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/http-kernel/Kernel.php:772
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/http-kernel/Kernel.php:126
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/framework-bundle/Test/KernelTestCase.php:81
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/api-platform/symfony/Bundle/Test/ApiTestCase.php:49
+/home/youngs/Desktop/devweb/TaxManager/back/tests/Api/UserRegistrationTest.php:15
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/phpunit/phpunit/phpunit:104
+
+2) App\Tests\Api\UserRegistrationTest::testDuplicateEmailRegistration
+Symfony\Component\DependencyInjection\Exception\RuntimeException: Cannot autowire service "App\State\UserProcessor": argument "$persistProcessor" of method "__construct()" references interface "ApiPlatform\State\ProcessorInterface" but no such service exists. You should maybe alias this interface to one of these existing services: "App\State\PostProcessor", "App\State\UserProcessor", "api_platform.state_processor.locator", "api_platform.state_processor.serialize", "api_platform.state_processor.write", "api_platform.state_processor.add_link_header", "api_platform.state_processor.documentation.serialize", "api_platform.state_processor.documentation.write", "api_platform.swagger_ui.processor", "api_platform.hydra.processor.link", "api_platform.doctrine.orm.state.remove_processor", "api_platform.doctrine.orm.state.persist_processor", "api_platform.http_cache.processor.add_headers", "api_platform.mercure.processor.add_link_header", "api_platform.hydra.processor.link.inner".
+
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/dependency-injection/Compiler/DefinitionErrorExceptionPass.php:51
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/dependency-injection/Compiler/Compiler.php:80
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/dependency-injection/ContainerBuilder.php:768
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/http-kernel/Kernel.php:507
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/http-kernel/Kernel.php:772
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/http-kernel/Kernel.php:126
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/symfony/framework-bundle/Test/KernelTestCase.php:81
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/api-platform/symfony/Bundle/Test/ApiTestCase.php:49
+/home/youngs/Desktop/devweb/TaxManager/back/tests/Api/UserRegistrationTest.php:41
+/home/youngs/Desktop/devweb/TaxManager/back/vendor/phpunit/phpunit/phpunit:104
+
+ERRORS!
+Tests: 2, Assertions: 0, Errors: 2.
