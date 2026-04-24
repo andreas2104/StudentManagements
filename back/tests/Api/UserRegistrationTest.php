@@ -32,11 +32,11 @@ class UserRegistrationTest extends ApiTestCase
     $this->assertResponseStatusCodeSame(201);
     $this->assertResponseHeaderSame(
       "content-type",
-      "application/json; charset=utf-8",
+      "application/ld+json; charset=utf-8",
     );
 
     $data = $response->toArray();
-    $this->assertSame("name", $data);
+    $this->assertSame($name, $data['name']);
     $this->assertArrayHasKey("email", $data);
     $this->assertSame($email, $data["email"]);
     $this->assertArrayNotHasKey("password", $data); // Password should be hidden
@@ -45,7 +45,7 @@ class UserRegistrationTest extends ApiTestCase
   public function testDuplicateEmailRegistration(): void
   {
     $client = static::createClient();
-    $email = "duplicate@example.com";
+    $email = "duplicate-" . uniqid() . "@example.com";
 
     // First registration
     $client->request("POST", "/api/users", [

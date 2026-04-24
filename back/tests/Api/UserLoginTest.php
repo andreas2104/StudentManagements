@@ -11,7 +11,7 @@ class UserLoginTest extends ApiTestCase
     {
         $client = static::createClient();
         
-        $email = 'login-test@example.com';
+        $email = 'login-test-' . uniqid() . '@example.com';
         $password = 'password123';
 
         // 1. Register the user

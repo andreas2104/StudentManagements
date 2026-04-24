@@ -1,14 +1,13 @@
-const config = useRuntimeConfig();
-
 export const useApi = () => {
-  const baseURL = config.public.apiBaseUrl || 'http://localhost:5000';
+  const config = useRuntimeConfig();
+  const baseURL = config.public.apiBaseUrl || 'http://localhost:8000';
 
   const request = async (endpoint: string, options: RequestInit = {}) => {
     const token = useState<string | null>('auth_token').value;
     
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...options.headers as any,
     };
 
     if (token) {
