@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "auth",
+  middleware: "guest",
 });
 
 const { post } = useApi();
@@ -32,7 +33,9 @@ const handleSubmit = async () => {
 
     router.push("/login?registered=true");
   } catch (err: any) {
-    error.value = err.message || "Échec de l'inscription. Veuillez réessayer.";
+    const errorMsg = err.message || "Échec de l'inscription. Veuillez réessayer.";
+    console.error("[REGISTER_ERROR]", { name: name.value, email: email.value, error: errorMsg });
+    error.value = errorMsg;
   } finally {
     loading.value = false;
   }
@@ -46,7 +49,7 @@ const handleSubmit = async () => {
     >
       <div class="text-center mb-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-2">Créer un compte</h2>
-        <p class="text-gray-600 text-sm">Rejoignez TaxManager aujourd'hui</p>
+        <p class="text-gray-600 text-sm">Rejoignez StudentManagement aujourd'hui</p>
       </div>
 
       <form @submit.prevent="handleSubmit" class="space-y-4">
