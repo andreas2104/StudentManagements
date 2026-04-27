@@ -1,6 +1,6 @@
 export const useApi = () => {
   const config = useRuntimeConfig();
-  const baseURL = config.public.apiBaseUrl || 'http://localhost:8000';
+  const baseURL = config.public.apiBaseUrl || 'http://localhost:8080';
 
   const request = async (endpoint: string, options: RequestInit = {}) => {
     const token = useState<string | null>('auth_token').value;
@@ -14,17 +14,24 @@ export const useApi = () => {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${baseURL}${endpoint}`, {
-      ...options,
-      headers,
-    });
+    try {
+      const response = await fetch(`${baseURL}${endpoint}`, {
+        ...options,
+        headers,
+      });
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Request failed' }));
-      throw new Error(error.message || `HTTP ${response.status}`);
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Request failed' }));
+        throw new Error(error.message || `HTTP ${response.status}`);
+      }
+
+      return response.json();
+    } catch (err: any) {
+      if (err.name === 'TypeError' && err.message.includes('fetch')) {
+        throw new Error('Impossible de se connecter au serveur. Veuillez vérifier que le backend est actif.');
+      }
+      throw err;
     }
-
-    return response.json();
   };
 
   return {

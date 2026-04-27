@@ -1,4 +1,7 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: "auth",
+});
 const { user, clearAuth } = useAuth();
 const router = useRouter();
 
@@ -28,7 +31,7 @@ const stats = [
       <div class="p-10">
         <h1 class="text-2xl font-black tracking-tight text-white flex items-center gap-2">
           <span class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">T</span>
-          TaxManager
+          StudentManagement
         </h1>
       </div>
 
