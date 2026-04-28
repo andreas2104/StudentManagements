@@ -13,7 +13,9 @@ class UserProcessor implements ProcessorInterface
     public function __construct(
         private UserPasswordHasherInterface $passwordHasher,
         #[Autowire(service: 'api_platform.doctrine.orm.state.persist_processor')]
-        private ProcessorInterface $persistProcessor
+        private ProcessorInterface $persistProcessor,
+        #[Autowire(env: 'ADMIN_EMAIL')]
+        private string $adminEmail
     ) {
     }
 
@@ -25,7 +27,11 @@ class UserProcessor implements ProcessorInterface
             );
             $data->eraseCredentials();
         }
-
+        if ($data->getEmail() === $this->adminEmail) {
+            $data->setRoles(['ROLE_ADMIN']);
+        }else {
+            $data->setRoles(['ROLE_USER']);
+        }
         return $this->persistProcessor->process($data, $operation, $uriVariables, $context);
     }
 }
