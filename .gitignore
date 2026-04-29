@@ -1,0 +1,46 @@
+### Symfony ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+
+### Lexik/JWT ###
+/config/jwt/*.pem
+
+### PHPUnit ###
+/.phpunit.cache/
+
+### PHP CS Fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+
+### Nuxt dev/build outputs ###
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+### Node dependencies ###
+node_modules
+
+### Logs ###
+logs
+*.log
+
+### Misc ###
+.DS_Store
+.fleet
+.idea
+
+### Local env files ###
+.env
+.env.*
+!.env.example
+
+### Uploaded files ###
+/uploads/
