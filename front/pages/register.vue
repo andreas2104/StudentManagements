@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { toast } from 'vue3-toastify';
+
 definePageMeta({
   layout: "auth",
   middleware: "guest",
@@ -8,34 +10,46 @@ const { post } = useApi();
 const router = useRouter();
 
 const name = ref("");
+const firstname = ref("");
+const contact = ref("");
 const email = ref("");
 const password = ref("");
 const passwordConfirm = ref("");
-const error = ref("");
+
+const globalError = ref("");
+const errors = ref<Record<string, string>>({});
 const loading = ref(false);
 
 const handleSubmit = async () => {
   if (password.value !== passwordConfirm.value) {
-    error.value = "Les mots de passe ne correspondent pas.";
+    globalError.value = "Passwords do not match.";
     return;
   }
 
-  error.value = "";
+  globalError.value = "";
+  errors.value = {};
   loading.value = true;
 
   try {
-    // Using API Platform default endpoint /api/users
     await post("/api/users", {
       name: name.value,
+      firstname: firstname.value,
+      contact: contact.value,
       email: email.value,
       password: password.value,
     });
 
+    toast.success("Account created successfully!");
     router.push("/login?registered=true");
   } catch (err: any) {
-    const errorMsg = err.message || "Échec de l'inscription. Veuillez réessayer.";
-    console.error("[REGISTER_ERROR]", { name: name.value, email: email.value, error: errorMsg });
-    error.value = errorMsg;
+    if (err.data && err.data.violations) {
+      err.data.violations.forEach((v: any) => {
+        errors.value[v.propertyPath] = v.message;
+      });
+    } else {
+      const errorMsg = err.message || "Registration failed. Please try again.";
+      globalError.value = errorMsg;
+    }
   } finally {
     loading.value = false;
   }
@@ -43,82 +57,102 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center p-4 bg-gray-100">
-    <div
-      class="w-full max-w-md bg-white rounded-lg border border-gray-200 shadow-sm p-8"
-    >
-      <div class="text-center mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">Créer un compte</h2>
-        <p class="text-gray-600 text-sm">Rejoignez StudentManagement aujourd'hui</p>
+  <div class="min-h-screen flex items-center bg-gray-500 justify-center p-4">
+    <div class="w-full max-w-md glass-card border border-gray-500 rounded-3xl bg-gray-700 px-10 py-12">
+      <div class="flex justify-center items-center mb-6">
+        <p class="text-2xl font-bold text-white">Create an account</p>
       </div>
 
-      <form @submit.prevent="handleSubmit" class="space-y-4">
-        <div
-          v-if="error"
-          class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm"
-        >
-          {{ error }}
-        </div>
+      <div
+        v-if="globalError"
+        class="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm mb-6"
+      >
+        {{ globalError }}
+      </div>
 
-        <div>
-          <label for="name" class="block text-sm font-medium text-gray-700 mb-1"
-            >Nom Complet</label
-          >
-          <input
-            id="name"
-            v-model="name"
-            type="text"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Jean Dupont"
-          />
-        </div>
+      <form @submit.prevent="handleSubmit" class="space-y-6 text-sm font-medium text-slate-300">
+        <div class="flex flex-col gap-2">
+          <div class="flex gap-4">
+            <div class="flex-1">
+              <label for="name">
+                Name
+              </label>
+              <input
+                id="name"
+                v-model="name"
+                type="text"
+                required
+                class="w-full border border-gray-500 rounded-xl p-1 bg-transparent focus:outline-none focus:border-indigo-500"
+              />
+              <p v-if="errors.name" class="text-red-400 text-xs mt-1">{{ errors.name }}</p>
+            </div>
+            <div class="flex-1">
+              <label for="firstname">
+                First name
+              </label>
+              <input
+                id="firstname"
+                v-model="firstname"
+                type="text"
+                required
+                class="w-full border border-gray-500 rounded-xl p-1 bg-transparent focus:outline-none focus:border-indigo-500"
+              />
+              <p v-if="errors.firstname" class="text-red-400 text-xs mt-1">{{ errors.firstname }}</p>
+            </div>
+          </div>
 
-        <div>
-          <label
-            for="email"
-            class="block text-sm font-medium text-gray-700 mb-1"
-            >Email</label
-          >
-          <input
-            id="email"
-            v-model="email"
-            type="email"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="vous@example.com"
-          />
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
           <div>
-            <label
-              for="password"
-              class="block text-sm font-medium text-gray-700 mb-1"
-              >Mot de passe</label
-            >
+            <label for="email">
+              Email
+            </label>
+            <input
+              id="email"
+              v-model="email"
+              type="email"
+              required
+              class="w-full border border-gray-500 rounded-xl p-1 bg-transparent focus:outline-none focus:border-indigo-500"
+            />
+            <p v-if="errors.email" class="text-red-400 text-xs mt-1">{{ errors.email }}</p>
+          </div>
+
+          <div>
+            <label for="contact">
+              Contact
+            </label>
+            <input
+              id="contact"
+              v-model="contact"
+              type="text"
+              required
+              class="w-full border border-gray-500 rounded-xl p-1 bg-transparent focus:outline-none focus:border-indigo-500"
+            />
+            <p v-if="errors.contact" class="text-red-400 text-xs mt-1">{{ errors.contact }}</p>
+          </div>
+
+          <div>
+            <label for="password">
+              Password
+            </label>
             <input
               id="password"
               v-model="password"
               type="password"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="••••••••"
+              class="w-full border border-gray-500 rounded-xl p-1 bg-transparent focus:outline-none focus:border-indigo-500"
             />
+            <p v-if="errors.password" class="text-red-400 text-xs mt-1">{{ errors.password }}</p>
           </div>
+
           <div>
-            <label
-              for="passwordConfirm"
-              class="block text-sm font-medium text-gray-700 mb-1"
-              >Confirmation</label
-            >
+            <label for="passwordConfirm">
+              Confirmation
+            </label>
             <input
               id="passwordConfirm"
               v-model="passwordConfirm"
               type="password"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="••••••••"
+              class="w-full border border-gray-500 rounded-xl p-1 bg-transparent focus:outline-none focus:border-indigo-500"
             />
           </div>
         </div>
@@ -126,39 +160,27 @@ const handleSubmit = async () => {
         <button
           type="submit"
           :disabled="loading"
-          class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+          class="w-full border border-gray-500 hover:bg-gray-600 disabled:bg-gray-500 rounded-xl p-2 transition-colors flex justify-center items-center gap-2"
         >
-          <div v-if="loading" class="flex items-center justify-center gap-2">
-            <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-                fill="none"
-              />
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-              />
-            </svg>
-            Création en cours...
-          </div>
-          <span v-else>S'inscrire</span>
+          <svg v-if="loading" class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          </svg>
+          <span>{{ loading ? "Creating account..." : "Sign up" }}</span>
         </button>
       </form>
 
-      <p class="text-center text-gray-600 text-sm mt-6">
-        Déjà un compte ?
-        <NuxtLink
-          to="/login"
-          class="text-blue-600 hover:text-blue-700 font-medium"
-          >Se connecter</NuxtLink
-        >
-      </p>
+      <div class="flex justify-center items-center mt-6">
+        <p class="text-sm text-slate-300">
+          Already have an account?
+          <NuxtLink
+            to="/login"
+            class="text-indigo-400 hover:text-indigo-300 transition-colors"
+          >
+            Log in
+          </NuxtLink>
+        </p>
+      </div>
     </div>
   </div>
 </template>

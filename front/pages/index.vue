@@ -1,59 +1,116 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: "auth",
+  middleware: "guest",
+});
+
+const { post } = useApi();
+const { setToken } = useAuth();
+const router = useRouter();
+
 const email = ref("");
 const password = ref("");
+const error = ref("");
+const loading = ref(false);
 
-const handleLogin = () => {
-  console.log("Tentative de connexion avec :", email.value, password.value);
-  // Ici, tu ajouteras ta logique d'appel API
+const handleSubmit = async () => {
+  error.value = "";
+  loading.value = true;
+  try {
+    const data = await post<{ token: string }>("/api/login", {
+      email: email.value,
+      password: password.value,
+    });
+    setToken(data.token);
+    router.push("/dashboard");
+  } catch (err: any) {
+    const errorMsg = err.message || "Échec de connexion. Veuillez réessayer.";
+    console.error("[LOGIN_ERROR]", { email: email.value, error: errorMsg });
+    error.value = errorMsg;
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">
-        Connexion
-      </h2>
+  <div class="min-h-screen flex items-center bg-gray-500 justify-center p-4">
+    <div class="w-full max-w-md glass-card border border-gray-500 rounded-3xl bg-gray-700 px-10 py-12">
+      <div class="flex justify-center items-center mb-6">
+        <p class="text-2xl font-bold text-white">Se connecter</p>
+      </div>
 
-      <form @submit.prevent="handleLogin" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Email</label>
-          <input
-            v-model="email"
-            type="email"
-            placeholder="nom@exemple.com"
-            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
-            required
-          />
+      <div
+        v-if="error"
+        class="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm mb-6"
+      >
+        {{ error }}
+      </div>
+
+      <form @submit.prevent="handleSubmit" class="space-y-6 text-sm font-medium text-slate-300">
+        <div class="flex flex-col gap-2">
+          <div>
+            <label for="email">
+              Email
+            </label>
+            <input
+              id="email"
+              v-model="email"
+              type="email"
+              required
+              class="w-full border border-gray-500 rounded-xl p-1 bg-transparent focus:outline-none focus:border-indigo-500"
+            />
+          </div>
+          <div>
+            <label for="password">
+              Mot de passe
+            </label>
+            <input
+              id="password"
+              v-model="password"
+              type="password"
+              required
+              class="w-full border border-gray-500 rounded-xl p-1 bg-transparent focus:outline-none focus:border-indigo-500"
+            />
+          </div>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700"
-            >Mot de passe</label
-          >
+        <div class="flex items-center gap-2">
           <input
-            v-model="password"
-            type="password"
-            placeholder="••••••••"
-            class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
-            required
+            id="remember"
+            type="checkbox"
+            class="h-4 w-4 rounded border-gray-500 bg-transparent text-indigo-600 focus:ring-indigo-500"
           />
+          <label for="remember">
+            Se souvenir de moi
+          </label>
         </div>
 
         <button
           type="submit"
-          class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+          :disabled="loading"
+          class="w-full border border-gray-500 hover:bg-gray-600 disabled:bg-gray-500 rounded-xl p-2 transition-colors flex justify-center items-center gap-2"
         >
-          Se connecter
+          <svg v-if="loading" class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          </svg>
+          <span>{{ loading ? "Chargement..." : "Se connecter" }}</span>
         </button>
       </form>
 
-      <p class="mt-4 text-sm text-center text-gray-600">
-        Pas de compte ?
-        <NuxtLink to="/register" class="text-blue-500 hover:underline"
-          >S'inscrire</NuxtLink
-        >
-      </p>
+      <div class="flex justify-center items-center mt-6">
+        <p class="text-sm">
+          Pas encore de compte ?
+          <NuxtLink
+            to="/register"
+            class="text-indigo-400 hover:text-indigo-300 transition-colors"
+          >
+            S'inscrirenmmm
+          </NuxtLink>
+        </p>
+      </div>
+
     </div>
   </div>
 </template>
