@@ -73,12 +73,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Groups(['user:read', 'user:create'])]
-    #[Assert\NotBlank(message: 'Firstname is required')]
+
     private ?string $firstname = null;
 
     #[ORM\Column(length: 60)]
     #[Groups(['user:read', 'user:create'])]
-    #[Assert\NotBlank(message: 'Contact is required')]
     private ?string $contact = null;
 
     #[ORM\Column(enumType: UserStatus::class)]
