@@ -42,7 +42,7 @@ class UserRegistrationTest extends ApiTestCase
   {
 
     $client = static::createClient();
-    $client->request('/POST', '/api/users', [
+    $client->request('POST', '/api/users', [
       'json' => [
         'name' => 'testname',
         'firstname' => 'testfirstname',

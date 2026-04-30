@@ -47,6 +47,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     
     #[ORM\Column(length: 180)]
     #[Groups(['user:read','user:create','user:admin:create'])]
+    #[Assert\NotBlank(message: 'Email is required')]
+    #[Assert\Email(message: 'The email {{ value }} is not a valid email.')]
     private ?string $email = null;
 
     /**
@@ -60,14 +62,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     #[Groups(['user:create'])]
+    #[Assert\NotBlank(message: 'Password is required')]
+    #[Assert\Length(min: 6, minMessage: 'Your password must be at least {{ limit }} characters long')]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['user:read', 'user:create'])]
+    #[Assert\NotBlank(message: 'Name is required')]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['user:read', 'user:create'])]
+
     private ?string $firstname = null;
 
     #[ORM\Column(length: 60)]
