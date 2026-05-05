@@ -1,6 +1,11 @@
 <template>
-  <div>
-    <NuxtWelcome v-if="false" />
+  <NuxtLayout>
     <NuxtPage />
-  </div>
+  </NuxtLayout>
 </template>
+
+<script setup>
+if (import.meta.client) {
+  window.$auth = useAuth()
+}
+</script>
