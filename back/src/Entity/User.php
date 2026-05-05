@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\GetCollection;
+use App\State\CurrentUserProvider;
 use App\State\UserProcessor;
 
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -27,6 +28,20 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[ApiResource(
     operations: [
+        // to get current user
+        new Get(
+            uriTemplate: '/me',
+            provider: CurrentUserProvider::class,
+            security: "is_granted('IS_AUTHENTICATED_FULLY')",
+            openapiContext: [
+                'summary' => 'Get user profil connected',
+                'responses' => [
+                    '200' => ['description' => 'Success'],
+                    '401' => ['description' => 'No authentified']
+                ]
+            ],
+            normalizationContext: ['groups' => ['user:read']]
+        ),
         new Get(normalizationContext: ['groups' => ['user:read']]),
         new GetCollection(normalizationContext: ['groups' => ['user:read']]),
         new Post(
@@ -55,6 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var list<string> The user roles
      */
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private array $roles = [];
 
     /**

@@ -7,7 +7,7 @@ definePageMeta({
 });
 
 const { post } = useApi();
-const { setToken } = useAuth();
+const { setToken, fetchUser } = useAuth();
 const router = useRouter();
 const route = useRoute();
 
@@ -28,11 +28,12 @@ const handleSubmit = async () => {
   error.value = "";
   loading.value = true;
   try {
-    const data = await post<{ token: string }>("/api/login_check", {
-      username: email.value,
+    const data = await post<{ token: string }>("/api/login", {
+      email: email.value,
       password: password.value,
     });
     setToken(data.token);
+    await fetchUser();
     toast.success("Successfully logged in!");
     router.push("/dashboard");
   } catch (err: any) {
