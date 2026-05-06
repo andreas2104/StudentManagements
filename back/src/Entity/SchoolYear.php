@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\State\SchoolYearProcessor;
 use App\Repository\SchoolYearRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -30,6 +32,17 @@ class SchoolYear
 
     #[ORM\Column]
     private ?bool $isActive = null;
+
+    /**
+     * @var Collection<int, Period>
+     */
+    #[ORM\OneToMany(targetEntity: Period::class, mappedBy: 'schoolYear')]
+    private Collection $periods;
+
+    public function __construct()
+    {
+        $this->periods = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -80,6 +93,36 @@ class SchoolYear
     public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Period>
+     */
+    public function getPeriods(): Collection
+    {
+        return $this->periods;
+    }
+
+    public function addPeriod(Period $period): static
+    {
+        if (!$this->periods->contains($period)) {
+            $this->periods->add($period);
+            $period->setSchoolYear($this);
+        }
+
+        return $this;
+    }
+
+    public function removePeriod(Period $period): static
+    {
+        if ($this->periods->removeElement($period)) {
+            // set the owning side to null (unless already changed)
+            if ($period->getSchoolYear() === $this) {
+                $period->setSchoolYear(null);
+            }
+        }
 
         return $this;
     }
